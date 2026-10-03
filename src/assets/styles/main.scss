@@ -1,0 +1,193 @@
+@use 'sass:math';
+
+$shooting-time: 3000ms;
+
+:root {
+  --text: #f1f5ff;
+  --muted: #dbe4f5;
+  --accent: #6ea0ff;
+  --card: rgba(14, 20, 34, 0.72);
+  --line: rgba(255, 255, 255, 0.16);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%) fixed;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+}
+
+.glass {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.7rem 1.5rem;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #08101f;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  &:hover { filter: brightness(1.1); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+}
+
+/* ---------- Full screen shooting stars ---------- */
+.night {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 150vmax;
+  height: 150vmax;
+  margin: -75vmax 0 0 -75vmax;
+  z-index: 0;
+  pointer-events: none;
+  transform: rotateZ(45deg);
+  opacity: 0.75;
+}
+
+.shooting_star {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(-45deg, rgba(95, 145, 255, 1), rgba(0, 0, 255, 0));
+  border-radius: 999px;
+  filter: drop-shadow(0 0 6px rgba(105, 155, 255, 1));
+  animation:
+    tail $shooting-time ease-in-out infinite,
+    shooting $shooting-time ease-in-out infinite;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: calc(50% - 1px);
+    right: 0;
+    height: 2px;
+    background: linear-gradient(-45deg, rgba(0, 0, 255, 0), rgba(95, 145, 255, 1), rgba(0, 0, 255, 0));
+    border-radius: 100%;
+    animation: shining $shooting-time ease-in-out infinite;
+  }
+  &::before { transform: translateX(50%) rotateZ(45deg); }
+  &::after  { transform: translateX(50%) rotateZ(-45deg); }
+
+  @for $i from 1 through 30 {
+    &:nth-child(#{$i}) {
+      $delay: math.random(9999) * 1ms;
+      top: #{math.random(100)}#{'%'};
+      left: #{math.random(100)}#{'%'};
+      animation-delay: $delay;
+      &::before,
+      &::after { animation-delay: $delay; }
+    }
+  }
+}
+
+@keyframes tail     { 0% { width: 0 } 30% { width: 100px } 100% { width: 0 } }
+@keyframes shining  { 0% { width: 0 } 50% { width: 30px }  100% { width: 0 } }
+@keyframes shooting { 0% { transform: translateX(0) } 100% { transform: translateX(300px) } }
+/* ---------- Glow text ---------- */
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 4px rgba(110, 160, 255, 0.35),
+      0 0 12px rgba(80, 130, 255, 0.25);
+  }
+  50% {
+    text-shadow:
+      0 0 6px rgba(110, 160, 255, 0.5),
+      0 0 18px rgba(80, 130, 255, 0.35);
+  }
+}
+
+@keyframes glowPulseSoft {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(110, 160, 255, 0.35)); }
+  50%      { filter: drop-shadow(0 0 7px rgba(110, 160, 255, 0.55)); }
+}
+
+
+.glow-text {
+  color: #bcd2ff;
+  animation: glowPulse 5s ease-in-out infinite;
+}
+
+.glow-grad {
+  background: linear-gradient(90deg, #7fa8ff, #bcd2ff, #6994f1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glowPulseSoft 5s ease-in-out infinite;
+}
+
+.glow-chip {
+  box-shadow: 0 0 8px rgba(110, 160, 255, 0.3), inset 0 0 8px rgba(110, 160, 255, 0.1);
+  text-shadow: 0 0 4px rgba(110, 160, 255, 0.5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow-text, .glow-grad { animation: none; }
+}
+/* ---------- Moving colour border ---------- */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes borderSpin {
+  to { --angle: 360deg; }
+}
+
+.moving-border {
+  position: relative;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(#0e1422, #0e1422) padding-box,
+    conic-gradient(from var(--angle), #3d6bff, #00e5ff, #ffffff, #a56bff, #3d6bff) border-box;
+  animation: borderSpin 4s linear infinite;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: conic-gradient(from var(--angle), #3d6bff, #00e5ff, #ffffff, #a56bff, #3d6bff);
+    filter: blur(10px);
+    opacity: 0.55;
+    z-index: -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moving-border { animation: none; }
+}
+/* ---------- Quick polish ---------- */
+::selection { background: rgba(110, 160, 255, 0.45); color: #fff; }
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #090a0f; }
+::-webkit-scrollbar-thumb { background: linear-gradient(#3d6bff, #00e5ff); border-radius: 10px; }
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: 0.25s;
+  &:hover { box-shadow: 0 0 20px rgba(110, 160, 255, 0.7); transform: translateY(-2px); }
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -120%;
+    width: 60%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: skewX(-20deg);
+    transition: 0.6s;
+  }
+  &:hover::before { left: 140%; }
+}
