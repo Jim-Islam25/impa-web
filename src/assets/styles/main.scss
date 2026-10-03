@@ -27,6 +27,7 @@ body {
   overflow-x: hidden;
   overscroll-behavior-y: none;
   font-family: 'Inter', sans-serif;
+  color: #f1f5ff;
   color: var(--text);
 }
 
@@ -38,6 +39,8 @@ body {
 }
 
 .btn {
+  position: relative;
+  overflow: hidden;
   display: inline-block;
   padding: 0.7rem 1.5rem;
   border: 0;
@@ -47,9 +50,27 @@ body {
   font-weight: 700;
   cursor: pointer;
   text-decoration: none;
-  &:hover { filter: brightness(1.1); }
+  transition: 0.25s;
+
+  &:hover {
+    box-shadow: 0 0 20px rgba(110, 160, 255, 0.7);
+    transform: translateY(-2px);
+  }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
   &.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+    transform: skewX(-20deg);
+    transition: 0.6s;
+  }
+  &:hover::before { left: 140%; }
 }
 
 /* ---------- Full screen shooting stars ---------- */
@@ -105,17 +126,14 @@ body {
 @keyframes tail     { 0% { width: 0 } 30% { width: 100px } 100% { width: 0 } }
 @keyframes shining  { 0% { width: 0 } 50% { width: 30px }  100% { width: 0 } }
 @keyframes shooting { 0% { transform: translateX(0) } 100% { transform: translateX(300px) } }
-/* ---------- Glow text ---------- */
+
+/* ---------- Glow text (soft) ---------- */
 @keyframes glowPulse {
   0%, 100% {
-    text-shadow:
-      0 0 4px rgba(110, 160, 255, 0.35),
-      0 0 12px rgba(80, 130, 255, 0.25);
+    text-shadow: 0 0 4px rgba(110, 160, 255, 0.35), 0 0 12px rgba(80, 130, 255, 0.25);
   }
   50% {
-    text-shadow:
-      0 0 6px rgba(110, 160, 255, 0.5),
-      0 0 18px rgba(80, 130, 255, 0.35);
+    text-shadow: 0 0 6px rgba(110, 160, 255, 0.5), 0 0 18px rgba(80, 130, 255, 0.35);
   }
 }
 
@@ -124,14 +142,13 @@ body {
   50%      { filter: drop-shadow(0 0 7px rgba(110, 160, 255, 0.55)); }
 }
 
-
 .glow-text {
   color: #bcd2ff;
   animation: glowPulse 5s ease-in-out infinite;
 }
 
 .glow-grad {
-  background: linear-gradient(90deg, #7fa8ff, #bcd2ff, #6994f1);
+  background: linear-gradient(90deg, #7fa8ff, #bcd2ff, #7fa8ff);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -142,9 +159,7 @@ body {
   box-shadow: 0 0 8px rgba(110, 160, 255, 0.3), inset 0 0 8px rgba(110, 160, 255, 0.1);
   text-shadow: 0 0 4px rgba(110, 160, 255, 0.5);
 }
-@media (prefers-reduced-motion: reduce) {
-  .glow-text, .glow-grad { animation: none; }
-}
+
 /* ---------- Moving colour border ---------- */
 @property --angle {
   syntax: '<angle>';
@@ -176,9 +191,6 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .moving-border { animation: none; }
-}
 /* ---------- Quick polish ---------- */
 ::selection { background: rgba(110, 160, 255, 0.45); color: #fff; }
 
@@ -186,19 +198,6 @@ body {
 ::-webkit-scrollbar-track { background: #090a0f; }
 ::-webkit-scrollbar-thumb { background: linear-gradient(#3d6bff, #00e5ff); border-radius: 10px; }
 
-.btn {
-  position: relative;
-  overflow: hidden;
-  transition: 0.25s;
-  &:hover { box-shadow: 0 0 20px rgba(110, 160, 255, 0.7); transform: translateY(-2px); }
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -120%;
-    width: 60%; height: 100%;
-    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-    transform: skewX(-20deg);
-    transition: 0.6s;
-  }
-  &:hover::before { left: 140%; }
+@media (prefers-reduced-motion: reduce) {
+  .glow-text, .glow-grad, .moving-border { animation: none; }
 }
