@@ -39,7 +39,7 @@ const close = () => {
         <RouterLink v-else :to="item.to!" class="link" @click="close">{{ item.label }}</RouterLink>
       </template>
 
-      <RouterLink to="/phase/phase-2" class="join" @click="close">Go Premium</RouterLink>
+      <RouterLink to="/phase/phase-2" class="join" @click="close">Join IMPA</RouterLink>
     </nav>
   </header>
 </template>
