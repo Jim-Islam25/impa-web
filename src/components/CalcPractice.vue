@@ -25,7 +25,7 @@ const check = (i: number) => {
         <button class="btn" @click="check(i)">Check</button>
       </div>
       <template v-if="shown[i]">
-        <p :class="result[i] ? 'ok' : 'bad'">{{ result[i] ? '✔ Correct' : '✘ Not correct' }}</p>
+        <p :class="result[i] ? 'ok' : 'bad'">{{ result[i] ? 'Correct' : 'Not correct' }}</p>
         <p class="sol">Solution: {{ p.solution }}</p>
       </template>
     </div>

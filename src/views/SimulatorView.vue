@@ -2,12 +2,6 @@
 import { ref, computed, watch } from 'vue'
 import { machines, scenarios, deviation, isPass, tolText, type Scenario, type Param } from '@/data/simulator'
 
-const icons: Record<string, string> = {
-  'LINAC QA': '⚡',
-  'Brachytherapy Unit': '☢️',
-  'CT Scanner': '🩻',
-}
-
 const machine = ref<(typeof machines)[number]>(machines[0])
 const scenario = ref<Scenario>(scenarios[0]!)
 const decision = ref<'PASS' | 'FAIL' | ''>('')
@@ -46,7 +40,6 @@ const pos = (p: Param) => {
     <h1 class="glow-text">Clinical Medical Physics Simulator</h1>
     <p class="sub">Review the measurements, decide PASS or FAIL, and justify your decision.</p>
 
-    <!-- Machine selector -->
     <div class="machines">
       <button
         v-for="m in machines"
@@ -55,13 +48,11 @@ const pos = (p: Param) => {
         :class="{ on: machine === m }"
         @click="machine = m"
       >
-        <span class="ico">{{ icons[m] }}</span>
         {{ m }}
       </button>
-      <button class="btn ghost" @click="pick(scenario.id)">🔄 New case</button>
+      <button class="btn ghost" @click="pick(scenario.id)">New case</button>
     </div>
 
-    <!-- Measurements -->
     <section class="glass panel">
       <div class="head">
         <h2>{{ scenario.title }}</h2>
@@ -104,15 +95,14 @@ const pos = (p: Param) => {
       </div>
     </section>
 
-    <!-- Decision -->
     <section class="glass panel">
       <h3>Your decision</h3>
       <div class="radios">
         <label class="pass" :class="{ on: decision === 'PASS' }">
-          <input type="radio" value="PASS" v-model="decision" :disabled="submitted" /> ✔ PASS
+          <input type="radio" value="PASS" v-model="decision" :disabled="submitted" /> PASS
         </label>
         <label class="fail" :class="{ on: decision === 'FAIL' }">
-          <input type="radio" value="FAIL" v-model="decision" :disabled="submitted" /> ✘ FAIL
+          <input type="radio" value="FAIL" v-model="decision" :disabled="submitted" /> FAIL
         </label>
       </div>
 
@@ -122,10 +112,9 @@ const pos = (p: Param) => {
       <button class="btn" :disabled="!canSubmit || submitted" @click="submitted = true">Submit answer</button>
     </section>
 
-    <!-- Feedback -->
     <section v-if="submitted" class="glass panel feedback" :class="isCorrect ? 'good' : 'wrong'">
       <div class="verdict">
-        <span class="big">{{ isCorrect ? '✔ Correct' : '✘ Incorrect' }}</span>
+        <span class="big">{{ isCorrect ? 'Correct' : 'Incorrect' }}</span>
         <span class="chip" :class="correct === 'PASS' ? 'ok' : 'bad'">Correct decision: {{ correct }}</span>
       </div>
 
@@ -151,8 +140,7 @@ h1 { font-family: 'Anton', sans-serif; text-align: center; font-size: clamp(1.8r
 .sub { text-align: center; color: var(--muted); margin-bottom: 1.5rem; }
 
 .machines { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; align-items: center; }
-.machine { display: flex; align-items: center; gap: 0.6rem; padding: 0.8rem 1.3rem; color: var(--text); font: inherit; font-weight: 600; cursor: pointer; transition: 0.25s;
-  .ico { font-size: 1.3rem; }
+.machine { padding: 0.8rem 1.3rem; color: var(--text); font: inherit; font-weight: 600; cursor: pointer; transition: 0.25s;
   &:hover { border-color: var(--accent); }
   &.on { border-color: #00e5ff; background: rgba(0, 229, 255, 0.12); box-shadow: 0 0 20px rgba(0, 229, 255, 0.35); } }
 
@@ -168,7 +156,6 @@ table { width: 100%; border-collapse: collapse; min-width: 480px;
 .val { font-weight: 700; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
 .barcol { min-width: 170px; }
 
-/* Tolerance bar */
 .bar { position: relative; height: 10px; border-radius: 999px; background: rgba(255, 90, 90, 0.28);
   .zone { position: absolute; top: 0; bottom: 0; left: 25%; width: 50%; background: rgba(95, 224, 160, 0.45); }
   .centre { position: absolute; top: -3px; bottom: -3px; left: 50%; width: 1px; background: rgba(255, 255, 255, 0.6); }

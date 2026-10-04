@@ -2,10 +2,14 @@
 import { computed, ref } from 'vue'
 import { phases } from '@/data/phases'
 import { courses, lectures, notes, quizzes, type Lecture } from '@/data/content'
+import { useAccess } from '@/composables/useAccess'
 import QuizPlayer from '@/components/QuizPlayer.vue'
 import CalcPractice from '@/components/CalcPractice.vue'
+import UnlockPanel from '@/components/UnlockPanel.vue'
+import PremiumFeature from '@/components/PremiumFeature.vue'
 
 const props = defineProps<{ slug: string; feature: string }>()
+const { unlocked } = useAccess()
 
 const phase = computed(() => phases.find((p) => p.slug === props.slug))
 const feat = computed(() => phase.value?.features.find((f) => f.key === props.feature))
@@ -16,62 +20,66 @@ const quiz = ref(quizzes[0])
 </script>
 
 <template>
-  <main class="page" v-if="phase && feat && feat.access === 'free'">
-    <RouterLink :to="`/phase/${phase.slug}`" class="back">← {{ phase.title }}</RouterLink>
-    <h1>{{ feat.icon }} {{ feat.title }}</h1>
+  <main class="page" v-if="phase && feat">
+    <RouterLink :to="`/phase/${phase.slug}`" class="back">Back to {{ phase.title }}</RouterLink>
+    <h1>{{ feat.title }}</h1>
     <p class="sub">{{ feat.desc }}</p>
 
-    <!-- Courses -->
-    <section v-if="feat.key === 'courses'" class="stack">
-      <article v-for="c in courses" :key="c.id" class="glass box">
-        <span class="pill">{{ c.level }}</span>
-        <h3>{{ c.title }}</h3>
-        <p>{{ c.desc }}</p>
-        <button class="btn ghost" @click="openCourse = openCourse === c.id ? null : c.id">
-          {{ openCourse === c.id ? 'Hide lessons' : `View ${c.lessons.length} lessons` }}
-        </button>
-        <ol v-if="openCourse === c.id">
-          <li v-for="l in c.lessons" :key="l.title">{{ l.title }} <small>({{ l.minutes }} min)</small></li>
-        </ol>
-      </article>
-    </section>
+    <!-- Free content -->
+    <template v-if="feat.access === 'free'">
+      <section v-if="feat.key === 'courses'" class="stack">
+        <article v-for="c in courses" :key="c.id" class="glass box">
+          <span class="pill">{{ c.level }}</span>
+          <h3>{{ c.title }}</h3>
+          <p>{{ c.desc }}</p>
+          <button class="btn ghost" @click="openCourse = openCourse === c.id ? null : c.id">
+            {{ openCourse === c.id ? 'Hide lessons' : `View ${c.lessons.length} lessons` }}
+          </button>
+          <ol v-if="openCourse === c.id">
+            <li v-for="l in c.lessons" :key="l.title">{{ l.title }} <small>({{ l.minutes }} min)</small></li>
+          </ol>
+        </article>
+      </section>
 
-    <!-- Lectures -->
-    <section v-else-if="feat.key === 'lectures'" class="lec">
-      <div class="glass player">
-        <video v-if="lecture?.src" :src="lecture.src" controls />
-        <div v-else class="ph">🎬 Video will appear here</div>
-        <h3>{{ lecture?.title }}</h3>
-        <p>{{ lecture?.topic }} · {{ lecture?.duration }}</p>
-      </div>
-      <div class="glass side">
-        <button v-for="l in lectures" :key="l.id" class="item" :class="{ on: lecture?.id === l.id }" @click="lecture = l">
-          {{ l.title }}<small>{{ l.duration }}</small>
-        </button>
-      </div>
-    </section>
-
-    <!-- Notes -->
-    <section v-else-if="feat.key === 'notes'" class="stack">
-      <article v-for="n in notes" :key="n.id" class="glass box row">
-        <div>
-          <h3>{{ n.title }}</h3>
-          <p>{{ n.pages }} pages · PDF</p>
+      <section v-else-if="feat.key === 'lectures'" class="lec">
+        <div class="glass player">
+          <video v-if="lecture?.src" :src="lecture.src" controls />
+          <div v-else class="ph">Video will appear here</div>
+          <h3>{{ lecture?.title }}</h3>
+          <p>{{ lecture?.topic }} · {{ lecture?.duration }}</p>
         </div>
-        <a class="btn" :href="n.file" download>Download</a>
-      </article>
-    </section>
+        <div class="glass side">
+          <button v-for="l in lectures" :key="l.id" class="item" :class="{ on: lecture?.id === l.id }" @click="lecture = l">
+            {{ l.title }}<small>{{ l.duration }}</small>
+          </button>
+        </div>
+      </section>
 
-    <!-- Quizzes -->
-    <section v-else-if="feat.key === 'quizzes'" class="stack">
-      <div class="tabs">
-        <button v-for="q in quizzes" :key="q.id" class="btn" :class="{ ghost: quiz?.id !== q.id }" @click="quiz = q">{{ q.title }}</button>
-      </div>
-      <QuizPlayer v-if="quiz" :key="quiz.id" :quiz="quiz" />
-    </section>
+      <section v-else-if="feat.key === 'notes'" class="stack">
+        <article v-for="n in notes" :key="n.id" class="glass box row">
+          <div>
+            <h3>{{ n.title }}</h3>
+            <p>{{ n.pages }} pages · PDF</p>
+          </div>
+          <a class="btn" :href="n.file" download>Download</a>
+        </article>
+      </section>
 
-    <!-- Calculations -->
-    <CalcPractice v-else-if="feat.key === 'calculations'" />
+      <section v-else-if="feat.key === 'quizzes'" class="stack">
+        <div class="tabs">
+          <button v-for="q in quizzes" :key="q.id" class="btn" :class="{ ghost: quiz?.id !== q.id }" @click="quiz = q">{{ q.title }}</button>
+        </div>
+        <QuizPlayer v-if="quiz" :key="quiz.id" :quiz="quiz" />
+      </section>
+
+      <CalcPractice v-else-if="feat.key === 'calculations'" />
+    </template>
+
+    <!-- Premium (locked) and coming soon -->
+    <UnlockPanel v-else-if="feat.access === 'soon' || !unlocked" :feature="feat" />
+
+    <!-- Premium (unlocked) -->
+    <PremiumFeature v-else :feat-key="feat.key" />
   </main>
 
   <main class="page" v-else>

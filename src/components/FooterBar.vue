@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { phases } from '@/data/phases'
-
+import { site } from '@/data/site'
 const year = new Date().getFullYear()
 </script>
 
@@ -29,8 +29,7 @@ const year = new Date().getFullYear()
 
       <div class="col">
         <h4>Contact</h4>
-        <a href="mailto:info@impa.example">info@impa.example</a>
-        <span class="muted">Social links coming soon</span>
+<a :href="`mailto:${site.email}`">{{ site.email }}</a>        <span class="muted">Social links coming soon</span>
       </div>
     </div>
 
