@@ -14,8 +14,12 @@ export const site = {
   email: 'info@impa.example',
 
   // Paste your public signing key here (see the Issue page). Keep it as null until you create it.
-  publicKey: null as JsonWebKey | null,
-
+publicKey: {
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "....",
+  "y": "...."
+} as JsonWebKey | null,
   plans: [
     {
       id: 'monthly',
@@ -38,9 +42,7 @@ export const site = {
   // Replace with your real bank details.
   bankDetails: [
     { label: 'Bank name', value: 'Your bank name' },
-    { label: 'Account name', value: 'Account holder name' },
     { label: 'Account number', value: '0000 0000 0000' },
-    { label: 'Branch', value: 'Branch name' },
     { label: 'SWIFT / routing code', value: 'Code (optional)' },
   ],
   bankNote: 'After you pay, submit the transfer reference number or the transaction ID from your bank receipt.',
