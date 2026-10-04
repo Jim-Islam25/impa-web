@@ -19,6 +19,7 @@ export default createRouter({
     { path: '/phase/:slug', name: 'phase', component: () => import('@/views/PhaseView.vue'), props: true },
     { path: '/phase/:slug/:feature', name: 'feature', component: () => import('@/views/FeatureView.vue'), props: true },
     { path: '/simulator', name: 'simulator', component: () => import('@/views/SimulatorView.vue') },
+    { path: '/premium', name: 'premium', component: () => import('@/views/PremiumView.vue') },
     { path: '/activate', name: 'activate', component: () => import('@/views/ActivateView.vue') },
     { path: '/issue', name: 'issue', component: () => import('@/views/IssueView.vue') },
     ...Object.entries(redirects).map(([from, to]) => ({ path: `/${from}`, redirect: to })),

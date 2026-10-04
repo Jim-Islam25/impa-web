@@ -43,7 +43,12 @@ export const generatePrivateKey = async (): Promise<JsonWebKey> => {
   return crypto.subtle.exportKey('jwk', pair.privateKey)
 }
 
-export const issueToken = async (priv: JsonWebKey, email: string, plan: string, days: number): Promise<{ token: string; license: License }> => {
+export const issueToken = async (
+  priv: JsonWebKey,
+  email: string,
+  plan: string,
+  days: number,
+): Promise<{ token: string; license: License }> => {
   const now = Date.now()
   const license: License = { e: email.trim().toLowerCase(), p: plan, i: now, x: now + days * 24 * 60 * 60 * 1000 }
   const body = toB64u(bytes(JSON.stringify(license)))

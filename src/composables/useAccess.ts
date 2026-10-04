@@ -54,7 +54,8 @@ const lock = () => {
 
 const unlocked = computed(() => license.value !== null && license.value.x > Date.now())
 const until = computed(() => (license.value ? new Date(license.value.x).toLocaleDateString() : null))
+const planName = computed(() => site.plans.find((p) => p.id === license.value?.p)?.name ?? '')
 
 export function useAccess() {
-  return { unlocked, license, until, activate, lock, ready }
+  return { unlocked, license, until, planName, activate, lock, ready }
 }

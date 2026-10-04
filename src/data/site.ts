@@ -20,9 +20,8 @@ export const site = {
     { id: 'yearly', name: 'Yearly', price: 'USD 45', period: 'per year', days: 365 },
   ] as Plan[],
 
-  // Replace with your real bank details.
   bank: {
-    name: 'Your bank name',
+    name: 'Bank name',
     accountName: 'Account holder name',
     accountNumber: '0000 0000 0000',
   },

@@ -4,7 +4,7 @@ import { site } from '@/data/site'
 import { useAccess } from '@/composables/useAccess'
 
 const props = defineProps<{ featureTitle?: string }>()
-const { unlocked, until } = useAccess()
+const { unlocked, until, planName } = useAccess()
 
 const planId = ref('')
 const email = ref('')
@@ -25,7 +25,7 @@ const submit = () => {
     `Bank transfer reference: ${reference.value}`,
     props.featureTitle ? `Requested from: ${props.featureTitle}` : '',
     '',
-    'I have paid. Please activate my premium access.',
+    'I have paid. Please send my activation link.',
   ]
     .filter((l) => l !== '')
     .join('\n')
@@ -37,7 +37,9 @@ const submit = () => {
 
 <template>
   <div class="pay">
-    <p v-if="unlocked" class="ok">Premium is active on this device<span v-if="until"> until {{ until }}</span>.</p>
+    <p v-if="unlocked" class="ok">
+      Premium is active on this device<span v-if="planName"> ({{ planName }})</span><span v-if="until"> until {{ until }}</span>.
+    </p>
 
     <h3>Choose a plan</h3>
     <div class="plans">

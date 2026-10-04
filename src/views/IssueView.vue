@@ -137,7 +137,7 @@ const mailToMember = computed(() => {
     '',
     `Access lasts ${days.value} days from today.`,
     '',
-    `${site.fullName}`,
+    site.fullName,
   ].join('\n')
   return `mailto:${email.value}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 })
@@ -151,7 +151,6 @@ const mailToMember = computed(() => {
     <p v-if="error" class="err">{{ error }}</p>
     <p v-if="message" class="ok">{{ message }}</p>
 
-    <!-- 1. Signing key -->
     <section class="box glass">
       <h2>Step 1: Signing key</h2>
 
@@ -191,7 +190,6 @@ const mailToMember = computed(() => {
       </template>
     </section>
 
-    <!-- 2. Issue -->
     <section v-if="priv" class="box glass">
       <h2>Step 2: Create an activation link</h2>
       <div class="grid">
@@ -224,7 +222,6 @@ const mailToMember = computed(() => {
       </div>
     </section>
 
-    <!-- 3. Log -->
     <section v-if="log.length" class="box glass">
       <h2>Recently issued (this browser)</h2>
       <div v-for="(l, i) in log" :key="i" class="item">

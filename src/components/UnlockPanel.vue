@@ -25,7 +25,7 @@ const notifyLink = computed(
     <template v-if="feature.access === 'premium'">
       <div class="get">
         <h2 class="gt">Unlock premium</h2>
-        <p class="desc">Pick a plan, pay by bank transfer, and all premium sections unlock on your device.</p>
+        <p class="desc">Pick a plan and pay by bank transfer. After we confirm your payment, we email you an activation link that unlocks everything.</p>
         <PaymentRequest :feature-title="feature.title" />
       </div>
     </template>
